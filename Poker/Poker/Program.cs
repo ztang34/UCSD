@@ -33,6 +33,17 @@ namespace Poker
                 //show best hand and update credits
                 Console.WriteLine("Best Hand: " + myDealer.ShowBestHand());
                 Console.WriteLine();
+
+                //prompt user to select cards to hold
+                string input = string.Empty;
+                do
+                {
+                    Console.Write("Select cards to hold (Example: 135): ");
+                    input = Console.ReadLine();
+                }
+                while (int.TryParse(input, out int cardsToHold));
+
+
                 Console.WriteLine($"Credits: {myDealer.Credits}");
                 Console.WriteLine();
 
@@ -75,5 +86,47 @@ namespace Poker
             }
 
         }
+
+        private static bool ReplaceCards (int input, int digits)
+        {
+            List<int> cardsToHold = new List<int>(digits);
+
+           //check if input is within range
+            if (input < 0 || input > 12345)
+            {
+                return false;
+            }
+
+            //get each digit of input integer
+            for (int i = (digits-1); i >=0; --i)
+            {
+                int index = input / (int)Math.Pow(10, i);
+
+                //check no index is 0 if there are more than 1 digits (i.e. only 0 is allowed)
+                if (index == 0 && digits != 1)
+                {
+                    return false;
+                }
+
+                cardsToHold.Add(index);
+                input -= index * (int)Math.Pow(10, i);
+            }
+
+            //sort list
+            cardsToHold.Sort();
+
+            //verify no index is greater than 5
+            if(cardsToHold[digits-1] > 5)
+            {
+                return false;
+            }
+
+            //TODO
+
+            return false;
+
+        }
+
+
     }
 }
