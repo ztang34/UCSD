@@ -122,7 +122,7 @@ namespace Poker
             }
 
             //TODO
-
+            if (true)
             return false;
 
         }
