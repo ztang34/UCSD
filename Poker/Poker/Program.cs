@@ -41,7 +41,7 @@ namespace Poker
                     Console.Write("Select cards to hold (Example: 135): ");
                     input = Console.ReadLine();
                 }
-                while (int.TryParse(input, out int cardsToHold));
+                while (int.TryParse(input, out int cardsToHold) && ReplaceCards(cardsToHold,input.Length, out List<int>cardsToReplace));
 
 
                 Console.WriteLine($"Credits: {myDealer.Credits}");
@@ -87,9 +87,12 @@ namespace Poker
 
         }
 
-        private static bool ReplaceCards (int input, int digits)
+        private static bool ReplaceCards (int input, int digits, out List<int>cardsToReplace)
         {
-            List<int> cardsToHold = new List<int>(digits);
+
+            cardsToReplace = null;
+
+            
 
            //check if input is within range
             if (input < 0 || input > 12345)
