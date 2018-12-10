@@ -15,6 +15,8 @@ namespace Poker
 
             bool playAgain = false;
 
+            List<int> cardsToReplace = new List<int>();
+
             do
             {
                 //divider
@@ -41,8 +43,16 @@ namespace Poker
                     Console.Write("Select cards to hold (Example: 135): ");
                     input = Console.ReadLine();
                 }
-                while (int.TryParse(input, out int cardsToHold) && ReplaceCards(cardsToHold,input.Length, out List<int>cardsToReplace));
+                while (!(int.TryParse(input, out int cardsToHold) && ReplaceCards(cardsToHold,out cardsToReplace)));
 
+                //replace cards
+                for(int i = 0; i< cardsToReplace.Count; ++i)
+                {
+                    myDealer.ReplaceCard(cardsToReplace[i]);
+                }
+
+                Console.WriteLine(myDealer.ShowCards());
+                Console.WriteLine("Best Hand: " + myDealer.ShowBestHand());
 
                 Console.WriteLine($"Credits: {myDealer.Credits}");
                 Console.WriteLine();
@@ -87,47 +97,75 @@ namespace Poker
 
         }
 
-        private static bool ReplaceCards (int input, int digits, out List<int>cardsToReplace)
+        private static bool ReplaceCards(int input, out List<int> cardsToReplace)
         {
+            bool ok = false;
 
-            cardsToReplace = null;
+            cardsToReplace = new List<int>();
+            cardsToReplace.AddRange(Enumerable.Range(0, 5));
 
-            
 
-           //check if input is within range
-            if (input < 0 || input > 12345)
+            //check if input is not negative
+            if (input < 0)
             {
-                return false;
+                ok = false;
+            }
+
+            //check if input is zero (i.e. replace all 5 cards)
+            else if (input == 0)
+            {
+                ok = true;
             }
 
             //get each digit of input integer
-            for (int i = (digits-1); i >=0; --i)
+            else
             {
-                int index = input / (int)Math.Pow(10, i);
+                List<int> cardsToHold = SplitIntegerIntoDigits(input);
 
-                //check no index is 0 if there are more than 1 digits (i.e. only 0 is allowed)
-                if (index == 0 && digits != 1)
+                //remove duplicate digits
+                cardsToHold = cardsToHold.Distinct().ToList();
+
+                //sort list
+                cardsToHold.Sort();
+
+                //0 is not allowed in the input integer
+                if (cardsToHold[0] == 0)
                 {
-                    return false;
+                    ok = false;
                 }
+                //each digit should not greater than 5
+                else if (cardsToHold[cardsToHold.Count-1]>5)
+                {
+                    ok = false;
+                }
+                else
+                {
+                    //get cards to replace
+                    for (int i = 0; i < cardsToHold.Count; ++i)
+                    {
+                        //convert cards to 0 based
+                        cardsToReplace.Remove(cardsToHold[i]-1);
+                    }
 
-                cardsToHold.Add(index);
-                input -= index * (int)Math.Pow(10, i);
+                    ok = true;
+                }
             }
 
-            //sort list
-            cardsToHold.Sort();
+            return ok;
+        }
 
-            //verify no index is greater than 5
-            if(cardsToHold[digits-1] > 5)
+
+        private static List<int> SplitIntegerIntoDigits (int input)
+        {
+            List<int> digits = new List<int>();
+
+            while (input > 0)
             {
-                return false;
+                digits.Add(input % 10);
+                input /= 10;
             }
 
-            //TODO
-            if (true)
-            return false;
-
+            return digits;
         }
 
 
