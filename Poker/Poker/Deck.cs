@@ -12,8 +12,7 @@ namespace Poker
         private const int shuffleHands = 100000;
         private void CreateDeck()
         {
-            Clear();
-
+           
             foreach (string faceValue in Card.ValidFaceValues)
             {
                 Add(new Card(faceValue, Card.SuitEnum.Clubs));
@@ -36,7 +35,25 @@ namespace Poker
 
         public Deck()
         {
+            Clear();
             CreateDeck();
+            ShuffleDeck();
+        }
+
+        public Deck(int numberOfDecks)
+        {
+            if(numberOfDecks<1 || numberOfDecks>4)
+            {
+                throw new ArgumentOutOfRangeException("valid number of decks must between 1 and 4", "invalid number of decks");
+            }
+
+            Clear();
+
+            for (int i = 0; i<numberOfDecks; ++i)
+            {
+                CreateDeck();
+            }
+
             ShuffleDeck();
         }
 
