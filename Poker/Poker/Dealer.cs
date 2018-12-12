@@ -6,106 +6,54 @@ using System.Threading.Tasks;
 
 namespace Poker
 {
-    public class Dealer
+    public class BlackJackDealer
     {
-        private PokerHand _PokerHand;
+        private Deck _Deck;
 
-        private int _Credits = 100;
+        private List<Card> _DealerHand;
+        private List<Card> _PlayerHand;
+        private int _BlackJackWin;
+        private int _NonBlackJackWin;
+        private int _Lose;
+        private int _Push;
 
-        public int Credits
+        public int TotalWin
         {
             get
             {
-                return _Credits;
+                return _BlackJackWin + _NonBlackJackWin;
             }
         }
 
-        public void Deal()
+        private void CreateShoe(int numberOfDeck)
         {
-            if (_PokerHand == null || _PokerHand.Deck.Count < 5)
+            try
             {
-                _PokerHand = new PokerHand();
+                _Deck = new Deck(numberOfDeck);
             }
-            else
+            catch(ArgumentOutOfRangeException ex)
             {
-                _PokerHand.DealHand();
+                Console.WriteLine($"Error: {ex.Message}");
             }
-
+            catch(Exception)
+            {
+                Console.WriteLine("Error initializing decks");
+            }
         }
 
-        public string ShowCards()
+        
+
+        public BlackJackDealer(int numberOfDeck)
         {
-            StringBuilder sb = new StringBuilder();
-
-            foreach (Card c in _PokerHand)
-            {
-                sb.Append(c.ToString() + " ");
-            }
-
-            return sb.ToString();
+            CreateShoe(numberOfDeck);
+            _DealerHand = new List<Card>();
+            _PlayerHand = new List<Card>();
+            _BlackJackWin = 0;
+            _NonBlackJackWin = 0;
+            _Lose = 0;
+            _Push = 0;
         }
 
-        public void ReplaceCard(int index)
-        {
-            //check if there are sufficient remaining cards to draw
-
-            if(_PokerHand.Deck.Count<1)
-            {
-                _PokerHand = new PokerHand();
-            }
-
-            _PokerHand.DrawHand(index);
-        }
-
-        public string ShowBestHand()
-        {
-            UpdateCredits();
-            return _PokerHand.GetBestPokerHand().ToString();
-        }
-
-        public void UpdateCredits()
-        {
-            int rewards = 0;
-
-            PokerHand.PokerHandTypes h = _PokerHand.GetBestPokerHand();
-
-            switch (h)
-            {
-                case PokerHand.PokerHandTypes.RoyalFlush:
-                    rewards = 250;
-                    break;
-                case PokerHand.PokerHandTypes.StraightFlush:
-                    rewards = 50;
-                    break;
-                case PokerHand.PokerHandTypes.FourOfAKind:
-                    rewards = 25;
-                    break;
-                case PokerHand.PokerHandTypes.FullHouse:
-                    rewards = 9;
-                    break;
-                case PokerHand.PokerHandTypes.Flush:
-                    rewards = 6;
-                    break;
-                case PokerHand.PokerHandTypes.Straight:
-                    rewards = 4;
-                    break;
-                case PokerHand.PokerHandTypes.ThreeOfAKind:
-                    rewards = 3;
-                    break;
-                case PokerHand.PokerHandTypes.TwoPairs:
-                    rewards = 2;
-                    break;
-                case PokerHand.PokerHandTypes.JackOrBetter:
-                    rewards = 1;
-                    break;
-                default:
-                    rewards = 0;
-                    break;
-            }
-
-            _Credits = _Credits + rewards - 1;
-        }
-
-
+        
     }
 }
