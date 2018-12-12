@@ -47,6 +47,13 @@ namespace Poker
 
         public void ReplaceCard(int index)
         {
+
+            //check if there are sufficient cards in deck to allow replace
+            if (_PokerHand.Deck.Count <1)
+            {
+                _PokerHand = new PokerHand();
+            }
+
             _PokerHand.DrawHand(index);
         }
 
