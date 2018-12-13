@@ -16,6 +16,7 @@ namespace Poker
         private int _NonBlackJackWin;
         private int _Lose;
         private int _Push;
+        private int _NumberOfDecks;
 
         public int TotalWin
         {
@@ -25,11 +26,15 @@ namespace Poker
             }
         }
 
-        private void CreateShoe(int numberOfDeck)
+        /// <summary>
+        /// Create a "shoe" of cards with different number of decks, valid range is 1-4
+        /// </summary>
+        /// <param name="numberOfDecks">number of decks in a "shoe"</param>
+        private void CreateShoe(int numberOfDecks)
         {
             try
             {
-                _Deck = new Deck(numberOfDeck);
+                _Deck = new Deck(numberOfDecks);
             }
             catch(ArgumentOutOfRangeException ex)
             {
@@ -42,16 +47,94 @@ namespace Poker
         }
 
         
-
-        public BlackJackDealer(int numberOfDeck)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="numberOfDecks">number of decks in a "shoe"</param>
+        public BlackJackDealer(int numberOfDecks)
         {
-            CreateShoe(numberOfDeck);
+            CreateShoe(numberOfDecks);
             _DealerHand = new List<Card>();
             _PlayerHand = new List<Card>();
             _BlackJackWin = 0;
             _NonBlackJackWin = 0;
             _Lose = 0;
             _Push = 0;
+            _NumberOfDecks = numberOfDecks;
+        }
+
+
+        /// <summary>
+        /// Shuffle cards when remaing cards is fewer than 15
+        /// </summary>
+        private void CheckRemainingCard ()
+        {
+            if(_Deck.Count < 16)
+            {
+                CreateShoe(_NumberOfDecks);
+            }
+        }
+
+        /// <summary>
+        /// Deal first card from "shoe" and add it to hand
+        /// </summary>
+        /// <param name="hand">dealer's hand or player's hand cards</param>
+        private void DealCard(List<Card> hand)
+        {
+            CheckRemainingCard();
+            Card card = _Deck[0];
+            _Deck.RemoveAt(0);
+            hand.Add(card);
+        }
+
+        /// <summary>
+        /// Deal multiple cards from "shoe" and add it to hand
+        /// </summary>
+        /// <param name="hand">dealer's or player's hand card</param>
+        /// <param name="numberOfCards">number of cards adds to hand card</param>
+        private void DealCard(List<Card> hand, int numberOfCards)
+        {
+            for (int i = 0; i < numberOfCards; ++i)
+            {
+                DealCard(hand);
+            }
+        }
+
+        /// <summary>
+        /// Calculate numeric total of a hand
+        /// </summary>
+        /// <param name="hand">dealer or players' hand</param>
+        /// <returns>numeric total of a hand</returns>
+        private int GetHandTotal (List<Card> hand)
+        {
+            int total = 0;
+            int numberofAces = 0;
+
+            foreach (Card c in hand)
+            {
+                if(c.FaceValue == "A")
+                {
+                    ++numberofAces;
+                }
+
+                total += c.NumericValue;
+            }
+
+            if(total > 21 && numberofAces >0)
+            {
+                while(numberofAces > 0)
+                {
+                    total -= 10;
+                    --numberofAces;
+
+                    if (total <= 21)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return total;
         }
 
         
