@@ -8,24 +8,59 @@ namespace Poker
 {
     public class BlackJackDealer
     {
-        private Deck _Deck;
+        private Deck _Shoe;
 
-        private List<Card> _DealerHand;
-        private List<Card> _PlayerHand;
+        private PokerHand _DealerHand;
+        private PokerHand _PlayerHand;
+       
+        private int _NumberOfDecks;
+
+        private const int _MinimumNumberOfCards = 15;
+
         private int _BlackJackWin;
         private int _NonBlackJackWin;
         private int _Lose;
         private int _Push;
-        private int _NumberOfDecks;
+
+        public int BlackJackWin
+        {
+            get
+            {
+                return _BlackJackWin;
+            }
+        }
+       
+        public int NonBlackJackWin
+        {
+            get
+            {
+                return _NonBlackJackWin;
+            }
+        }
+        public int Lose
+        {
+            get
+            {
+                return _Lose;
+            }
+        }
+        public int Push
+        {
+            get
+            {
+                return _Push;
+            }
+        }
 
         public int TotalWin
         {
             get
             {
-                return _BlackJackWin + _NonBlackJackWin;
+                return BlackJackWin + NonBlackJackWin;
             }
         }
 
+       
         /// <summary>
         /// Create a "shoe" of cards with different number of decks, valid range is 1-4
         /// </summary>
@@ -34,7 +69,7 @@ namespace Poker
         {
             try
             {
-                _Deck = new Deck(numberOfDecks);
+                _Shoe = new Deck(numberOfDecks);
             }
             catch(ArgumentOutOfRangeException ex)
             {
@@ -54,8 +89,6 @@ namespace Poker
         public BlackJackDealer(int numberOfDecks)
         {
             CreateShoe(numberOfDecks);
-            _DealerHand = new List<Card>();
-            _PlayerHand = new List<Card>();
             _BlackJackWin = 0;
             _NonBlackJackWin = 0;
             _Lose = 0;
@@ -69,74 +102,107 @@ namespace Poker
         /// </summary>
         private void CheckRemainingCard ()
         {
-            if(_Deck.Count < 16)
+            if(_Shoe.Count < _MinimumNumberOfCards)
             {
                 CreateShoe(_NumberOfDecks);
+                
             }
         }
 
         /// <summary>
-        /// Deal first card from "shoe" and add it to hand
+        /// Start a new player hand and dealer hand
         /// </summary>
-        /// <param name="hand">dealer's hand or player's hand cards</param>
-        private void DealCard(List<Card> hand)
+        /// <returns>true if player's hand is a black jack</returns>
+        public bool PlayNewHand ()
         {
+            bool isBlackJack;
+
             CheckRemainingCard();
-            Card card = _Deck[0];
-            _Deck.RemoveAt(0);
-            hand.Add(card);
+            _PlayerHand = new PokerHand(_Shoe);
+
+            CheckRemainingCard();
+            _DealerHand = new PokerHand(_Shoe);
+
+            CheckRemainingCard();
+            _DealerHand.DealCardToSoft17(_Shoe);
+
+           if(_PlayerHand.IsBlackJack)
+            {
+                isBlackJack = true;
+            }
+           else
+            {
+                isBlackJack = false;
+            }
+
+            return isBlackJack;
+
         }
 
         /// <summary>
-        /// Deal multiple cards from "shoe" and add it to hand
+        /// Deal a new card to player's hand if it is less than 21
         /// </summary>
-        /// <param name="hand">dealer's or player's hand card</param>
-        /// <param name="numberOfCards">number of cards adds to hand card</param>
-        private void DealCard(List<Card> hand, int numberOfCards)
+        public void DealerHandDeal()
         {
-            for (int i = 0; i < numberOfCards; ++i)
+            if (_PlayerHand.Total < 21)
             {
-                DealCard(hand);
+                CheckRemainingCard();
+                _DealerHand.DealCard(_Shoe);
             }
+            
+        }
+
+
+        public enum Result
+        {
+            BlackJackWin,
+            NonBlackJackWin,
+            Lose,
+            push
         }
 
         /// <summary>
-        /// Calculate numeric total of a hand
+        /// Compare dealer's hand and player's hand
         /// </summary>
-        /// <param name="hand">dealer or players' hand</param>
-        /// <returns>numeric total of a hand</returns>
-        private int GetHandTotal (List<Card> hand)
+        /// <returns>Result enum showing weather player win, push or lose</returns>
+        public Result CompareDealerHandWithPlayerHand()
         {
-            int total = 0;
-            int numberofAces = 0;
+            Result result;
 
-            foreach (Card c in hand)
+            if (_PlayerHand.IsBlackJack)
             {
-                if(c.FaceValue == "A")
+                if (_DealerHand.Total == 21)
                 {
-                    ++numberofAces;
+                    ++_Push;
+                    result = Result.push;
                 }
-
-                total += c.NumericValue;
-            }
-
-            if(total > 21 && numberofAces >0)
-            {
-                while(numberofAces > 0)
+                else
                 {
-                    total -= 10;
-                    --numberofAces;
-
-                    if (total <= 21)
-                    {
-                        break;
-                    }
+                    ++_BlackJackWin;
+                    result = Result.BlackJackWin;
                 }
             }
+            else
+            {
+                if (_PlayerHand.Total > _DealerHand.Total)
+                {
+                    ++_NonBlackJackWin;
+                    result = Result.NonBlackJackWin;
+                }
+                else if (_PlayerHand.Total < _DealerHand.Total)
+                {
+                    ++_Lose;
+                    result = Result.Lose;
+                }
+                else
+                {
+                    ++_Push;
+                    result = Result.push;
+                }
+            }
 
-            return total;
+            return result;
+
         }
-
-        
-    }
+    }    
 }
