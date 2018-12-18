@@ -99,7 +99,16 @@ namespace Poker
             {
                 Console.WriteLine($"Player's hand: {dealer.PlayerHandCard}");
                 Console.WriteLine($"Dealer's hand: [hidden hole card] {dealer.DealerUpCard}");
+
                 //TODO: ask if user wants to deal more cards, parse the response, check dealer's total then deal cards, check if busted, then loop
+
+                Console.WriteLine("Press any key to see dealer's hand cards...");
+                Console.ReadLine();
+                Console.WriteLine($"Dealer's hand: {dealer.DealerHandCard}");
+                Console.WriteLine($"Your total is: {dealer.PlayerTotal}; Dealer's total is: {dealer.DealerTotal} ");
+                Console.WriteLine(CompareHands(dealer));
+                Console.WriteLine("Press any key to go back to main menu...");
+                Console.ReadLine();
             }
                        
         }
