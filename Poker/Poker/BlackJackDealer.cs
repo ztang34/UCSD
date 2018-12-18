@@ -17,40 +17,11 @@ namespace Poker
 
         private const int _MinimumNumberOfCards = 15;
 
-        private int _BlackJackWin;
-        private int _NonBlackJackWin;
-        private int _Lose;
-        private int _Push;
+        public int BlackJackWin { get; private set; }
+        public int NonBlackJackWin { get; private set; }
+        public int Lose { get; private set; }
+        public int Push { get; private set; }
 
-        public int BlackJackWin
-        {
-            get
-            {
-                return _BlackJackWin;
-            }
-        }
-       
-        public int NonBlackJackWin
-        {
-            get
-            {
-                return _NonBlackJackWin;
-            }
-        }
-        public int Lose
-        {
-            get
-            {
-                return _Lose;
-            }
-        }
-        public int Push
-        {
-            get
-            {
-                return _Push;
-            }
-        }
 
         public int TotalWin
         {
@@ -60,6 +31,58 @@ namespace Poker
             }
         }
 
+        public string DealerHandCard
+        {
+            get
+            {
+                if(_DealerHand == null)
+                {
+                    PlayNewHand();
+                }
+
+                return _DealerHand.HandCards;
+            }
+        }
+
+        public string PlayerHandCard
+        {
+            get
+            {
+                if(_PlayerHand == null)
+                {
+                    PlayNewHand();
+                }
+                return _PlayerHand.HandCards;
+            }
+        }
+
+        public string DealerUpCard
+        {
+            get
+            {
+                if(_DealerHand == null)
+                {
+                    PlayNewHand();
+                }
+                return _DealerHand.UpCard;
+            }
+        }
+
+        public int PlayerTotal
+        {
+            get
+            {
+                return _PlayerHand.Total;
+            }
+        }
+
+        public int DealerTotal
+        {
+            get
+            {
+                return _DealerHand.Total;
+            }
+        }
        
         /// <summary>
         /// Create a "shoe" of cards with different number of decks, valid range is 1-4
@@ -89,10 +112,10 @@ namespace Poker
         public BlackJackDealer(int numberOfDecks)
         {
             CreateShoe(numberOfDecks);
-            _BlackJackWin = 0;
-            _NonBlackJackWin = 0;
-            _Lose = 0;
-            _Push = 0;
+            BlackJackWin = 0;
+            NonBlackJackWin = 0;
+            Lose = 0;
+            Push = 0;
             _NumberOfDecks = numberOfDecks;
         }
 
@@ -112,39 +135,34 @@ namespace Poker
         /// <summary>
         /// Start a new player hand and dealer hand
         /// </summary>
-        /// <returns>true if player's hand is a black jack</returns>
-        public bool PlayNewHand ()
+       
+        public void PlayNewHand ()
         {
-            bool isBlackJack;
-
-            CheckRemainingCard();
-            _PlayerHand = new PokerHand(_Shoe);
-
-            CheckRemainingCard();
-            _DealerHand = new PokerHand(_Shoe);
-
-            CheckRemainingCard();
-            _DealerHand.DealCardToSoft17(_Shoe);
-
-           if(_PlayerHand.IsBlackJack)
+                   
+            try
             {
-                isBlackJack = true;
-            }
-           else
-            {
-                isBlackJack = false;
-            }
+                CheckRemainingCard();
+                _PlayerHand = new PokerHand(_Shoe);
 
-            return isBlackJack;
+                CheckRemainingCard();
+                _DealerHand = new PokerHand(_Shoe);
+
+                CheckRemainingCard();
+                _DealerHand.DealCardToSoft17(_Shoe);
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                Console.WriteLine($"Insufficent cards in deck: {ex.Message}");
+            }
 
         }
 
         /// <summary>
         /// Deal a new card to player's hand if it is less than 21
         /// </summary>
-        public void DealerHandDeal()
+        public void PlayerHandDeal()
         {
-            if (_PlayerHand.Total < 21)
+            if (!_PlayerHand.IsBusted)
             {
                 CheckRemainingCard();
                 _DealerHand.DealCard(_Shoe);
@@ -153,6 +171,7 @@ namespace Poker
         }
 
 
+      
         public enum Result
         {
             BlackJackWin,
@@ -173,30 +192,36 @@ namespace Poker
             {
                 if (_DealerHand.Total == 21)
                 {
-                    ++_Push;
+                    ++Push;
                     result = Result.push;
                 }
                 else
                 {
-                    ++_BlackJackWin;
+                    ++BlackJackWin;
                     result = Result.BlackJackWin;
                 }
             }
+            else if (_PlayerHand.IsBusted)
+            {
+                ++Lose;
+                result = Result.Lose;
+            }
+
             else
             {
                 if (_PlayerHand.Total > _DealerHand.Total)
                 {
-                    ++_NonBlackJackWin;
+                    ++NonBlackJackWin;
                     result = Result.NonBlackJackWin;
                 }
                 else if (_PlayerHand.Total < _DealerHand.Total)
                 {
-                    ++_Lose;
+                    ++Lose;
                     result = Result.Lose;
                 }
                 else
                 {
-                    ++_Push;
+                    ++Push;
                     result = Result.push;
                 }
             }

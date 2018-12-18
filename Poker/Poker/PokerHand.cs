@@ -47,6 +47,36 @@ namespace Poker
         }
 
         /// <summary>
+        /// Return hand cards in string
+        /// </summary>
+        public string HandCards
+        {
+            get
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (Card c in this)
+                {
+                    sb.Append(c.ToString() + " ");
+                }
+
+                return sb.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Return only up card in string
+        /// </summary>
+        public string UpCard
+        {
+            get
+            {
+                return this[1].ToString();
+            }
+        }
+
+
+
+        /// <summary>
         /// Show if the poker hand is a black jack or not
         /// </summary>
         public bool IsBlackJack
