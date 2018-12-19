@@ -83,6 +83,14 @@ namespace Poker
                 return _DealerHand.Total;
             }
         }
+
+        public bool IsBlackJack
+        {
+            get
+            {
+                return _DealerHand.IsBlackJack;
+            }
+        }
        
         /// <summary>
         /// Create a "shoe" of cards with different number of decks, valid range is 1-4

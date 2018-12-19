@@ -83,34 +83,69 @@ namespace Poker
         {
             dealer.PlayNewHand();
 
-            if (dealer.PlayerTotal == 21)
+         
+            Console.WriteLine($"Player's hand: {dealer.PlayerHandCard}");
+            Console.WriteLine($"Dealer's hand: [hidden hole card] {dealer.DealerUpCard}");
+
+            
+            while (true)
             {
-                Console.WriteLine($"Player's hand: {dealer.PlayerHandCard}");
-                Console.WriteLine("You have got blackJack!!");
+                if (dealer.IsBlackJack)
+                {
+                    Console.WriteLine("You have got blackJack!!");
+                    break;
+                }
+
+                else if (dealer.PlayerTotal == 21)
+                {
+                    Console.WriteLine("You have hit 21 points!");
+                    break;
+                }
+
+                else if (dealer.PlayerTotal > 21)
+                {
+                    Console.WriteLine("You have busted!");
+                    break;
+                }
+
+                else
+                {
+                    bool dealCard = false;
+
+                    Console.Write("Do you want to hit? (Y/N): ");
+                    while (!BoolTryParse(Console.ReadLine(), out dealCard))
+                    {
+                        Console.WriteLine("Invalid input!");
+                        Console.Write("Do you want to hit? (Y/N): ");
+                    }
+
+                    if(dealCard)
+                    {
+                        dealer.PlayerHandDeal();
+                        Console.WriteLine("You decide to hit!");
+                        Console.WriteLine($"Player's hand: {dealer.PlayerHandCard}");
+                        continue;
+                    }
+                    else
+                    {
+                        Console.WriteLine("You decide to stand!");
+                        break;
+                    }
+                }                
+            }   
+
+            if (dealer.PlayerTotal <=21)
+            {
                 Console.WriteLine("Press any key to see dealer's hand cards...");
                 Console.ReadLine();
                 Console.WriteLine($"Dealer's hand: {dealer.DealerHandCard}");
                 Console.WriteLine($"Your total is: {dealer.PlayerTotal}; Dealer's total is: {dealer.DealerTotal} ");
-                Console.WriteLine(CompareHands(dealer));
-                Console.WriteLine("Press any key to go back to main menu...");
-                Console.ReadLine();
             }
-            else
-            {
-                Console.WriteLine($"Player's hand: {dealer.PlayerHandCard}");
-                Console.WriteLine($"Dealer's hand: [hidden hole card] {dealer.DealerUpCard}");
-
-                //TODO: ask if user wants to deal more cards, parse the response, check dealer's total then deal cards, check if busted, then loop
-
-                Console.WriteLine("Press any key to see dealer's hand cards...");
-                Console.ReadLine();
-                Console.WriteLine($"Dealer's hand: {dealer.DealerHandCard}");
-                Console.WriteLine($"Your total is: {dealer.PlayerTotal}; Dealer's total is: {dealer.DealerTotal} ");
-                Console.WriteLine(CompareHands(dealer));
-                Console.WriteLine("Press any key to go back to main menu...");
-                Console.ReadLine();
-            }
-                       
+            
+            Console.WriteLine(CompareHands(dealer));
+            Console.WriteLine("Press any key to go back to main menu...");
+            Console.ReadLine();
+                                  
         }
 
         static void ShowStatistics (BlackJackDealer dealer)
@@ -145,6 +180,31 @@ namespace Poker
                     return string.Empty;
                    
             }
+        }
+
+        static bool BoolTryParse (string input, out bool result)
+        {
+            bool ok = false;
+
+            input = input.ToUpper();
+
+            if (input == "YES" || input =="Y")
+            {
+                result = true;
+                ok = true;
+            }
+            else if (input == "NO" || input == "N")
+            {
+                result = false;
+                ok = true;
+            }
+            else
+            {
+                result = false;
+                ok = false;
+            }
+
+            return ok;
         }
 
         enum MenuChocies
