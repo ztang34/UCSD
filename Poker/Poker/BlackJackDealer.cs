@@ -88,7 +88,7 @@ namespace Poker
         {
             get
             {
-                return _DealerHand.IsBlackJack;
+                return _PlayerHand.IsBlackJack;
             }
         }
        
@@ -173,7 +173,7 @@ namespace Poker
             if (!_PlayerHand.IsBusted)
             {
                 CheckRemainingCard();
-                _DealerHand.DealCard(_Shoe);
+                _PlayerHand.DealCard(_Shoe);
             }
             
         }
@@ -213,6 +213,11 @@ namespace Poker
             {
                 ++Lose;
                 result = Result.Lose;
+            }
+            else if (_DealerHand.IsBusted)
+            {
+                ++NonBlackJackWin;
+                result = Result.NonBlackJackWin;
             }
 
             else

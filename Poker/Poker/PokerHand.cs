@@ -20,12 +20,24 @@ namespace Poker
 
                 foreach (Card c in this)
                 {
+                    int blackJackNumericValue = 0;
+                   
                     if (c.FaceValue == "A")
                     {
                         ++numberofAces;
+                        blackJackNumericValue = 11;
                     }
+                    else if(c.NumericValue > 10)
+                    {
+                        blackJackNumericValue = 10;
+                    }
+                    else
+                    {
+                        blackJackNumericValue = c.NumericValue;
+                    }
+                   
 
-                    total += c.NumericValue;
+                    total += blackJackNumericValue;
                 }
 
                 if (total > 21 && numberofAces > 0)

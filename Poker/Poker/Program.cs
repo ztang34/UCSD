@@ -83,7 +83,9 @@ namespace Poker
         {
             dealer.PlayNewHand();
 
-         
+            Console.WriteLine(new string('-',25));
+            Console.WriteLine("Dealing cards...");
+            Console.WriteLine();
             Console.WriteLine($"Player's hand: {dealer.PlayerHandCard}");
             Console.WriteLine($"Dealer's hand: [hidden hole card] {dealer.DealerUpCard}");
 
@@ -139,7 +141,15 @@ namespace Poker
                 Console.WriteLine("Press any key to see dealer's hand cards...");
                 Console.ReadLine();
                 Console.WriteLine($"Dealer's hand: {dealer.DealerHandCard}");
-                Console.WriteLine($"Your total is: {dealer.PlayerTotal}; Dealer's total is: {dealer.DealerTotal} ");
+                Console.WriteLine();
+                if(dealer.DealerTotal <=21)
+                {
+                    Console.WriteLine($"Your total is: {dealer.PlayerTotal}; Dealer's total is: {dealer.DealerTotal} ");
+                }
+                else
+                {
+                    Console.WriteLine($"Your total is: {dealer.PlayerTotal}; Dealer's total is: Dealer is busted! ");
+                }
             }
             
             Console.WriteLine(CompareHands(dealer));
