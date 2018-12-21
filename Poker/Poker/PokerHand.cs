@@ -27,6 +27,8 @@ namespace Poker
                         ++numberofAces;
                         blackJackNumericValue = 11;
                     }
+
+                    //J, Q, K have 10 point
                     else if(c.NumericValue > 10)
                     {
                         blackJackNumericValue = 10;
@@ -40,6 +42,7 @@ namespace Poker
                     total += blackJackNumericValue;
                 }
 
+                //Ace can be 11 or 1
                 if (total > 21 && numberofAces > 0)
                 {
                     while (numberofAces > 0)
@@ -106,6 +109,9 @@ namespace Poker
             }
         }
 
+        /// <summary>
+        /// Show if the poker hand is busted
+        /// </summary>
         public bool IsBusted
         {
             get

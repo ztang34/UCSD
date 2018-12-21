@@ -15,6 +15,7 @@ namespace Poker
 
             int numberofDecks = 0;
 
+            //prompt user to enter number of decks they want to play
             while (true)
             {
                 Console.Write("Please select how many decks of cards you wish to play with (1-4): ");
@@ -24,6 +25,8 @@ namespace Poker
                     Console.WriteLine("Please enter a valid number!");
                     continue;
                 }
+
+                //valid number of decks in a "shoe" is between 1 to 4
                 else if (numberofDecks < 1 || numberofDecks > 4)
                 {
                     Console.WriteLine("Valid number of decks is between 1 and 4");
@@ -35,8 +38,10 @@ namespace Poker
                 }
             }
 
+            //create a new blackjack dealer object
             BlackJackDealer myDealer = new BlackJackDealer(numberofDecks);
 
+            //loop through main menu
             var options = Enum.GetValues(typeof(MenuChocies));
             MenuChocies choice;
 
@@ -79,6 +84,7 @@ namespace Poker
 
         }
 
+        
         static void PlayNewHand(BlackJackDealer dealer)
         {
             dealer.PlayNewHand();
@@ -87,6 +93,7 @@ namespace Poker
             Console.WriteLine("Dealing cards...");
             Console.WriteLine();
             Console.WriteLine($"Player's hand: {dealer.PlayerHandCard}");
+            //dealer's hold card is hidden from player
             Console.WriteLine($"Dealer's hand: [hidden hole card] {dealer.DealerUpCard}");
 
             
@@ -98,18 +105,21 @@ namespace Poker
                     break;
                 }
 
+                //automatically stand when reaching 21 points
                 else if (dealer.PlayerTotal == 21)
                 {
                     Console.WriteLine("You have hit 21 points!");
                     break;
                 }
 
+                //automatic lose if busted
                 else if (dealer.PlayerTotal > 21)
                 {
                     Console.WriteLine("You have busted!");
                     break;
                 }
 
+                //check if player wants to stand or hit
                 else
                 {
                     bool dealCard = false;
@@ -136,22 +146,28 @@ namespace Poker
                 }                
             }   
 
+            //no need to check dealer's card if player is busted
             if (dealer.PlayerTotal <=21)
             {
                 Console.WriteLine("Press any key to see dealer's hand cards...");
                 Console.ReadLine();
                 Console.WriteLine($"Dealer's hand: {dealer.DealerHandCard}");
                 Console.WriteLine();
+
+
                 if(dealer.DealerTotal <=21)
                 {
                     Console.WriteLine($"Your total is: {dealer.PlayerTotal}; Dealer's total is: {dealer.DealerTotal} ");
                 }
+
+                //no need to show dealer's point if it is busted
                 else
                 {
                     Console.WriteLine($"Your total is: {dealer.PlayerTotal}; Dealer's total is: Dealer is busted! ");
                 }
             }
             
+            //compare player's hand with dealer's, it will also update statistics
             Console.WriteLine(CompareHands(dealer));
             Console.WriteLine("Press any key to go back to main menu...");
             Console.ReadLine();
@@ -192,6 +208,12 @@ namespace Poker
             }
         }
 
+        /// <summary>
+        /// Parse user's input from "Y/N" or "YES/NO" to bool
+        /// </summary>
+        /// <param name="input">user's input</param>
+        /// <param name="result">output boolean</param>
+        /// <returns></returns>
         static bool BoolTryParse (string input, out bool result)
         {
             bool ok = false;

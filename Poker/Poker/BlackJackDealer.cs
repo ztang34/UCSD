@@ -17,6 +17,9 @@ namespace Poker
 
         private const int _MinimumNumberOfCards = 15;
 
+       /// <summary>
+       /// Player's statistics
+       /// </summary>
         public int BlackJackWin { get; private set; }
         public int NonBlackJackWin { get; private set; }
         public int Lose { get; private set; }
@@ -31,6 +34,9 @@ namespace Poker
             }
         }
 
+        /// <summary>
+        /// Return dealer's hand cards in string
+        /// </summary>
         public string DealerHandCard
         {
             get
@@ -44,6 +50,9 @@ namespace Poker
             }
         }
 
+        /// <summary>
+        /// Return player's hand cards in string
+        /// </summary>
         public string PlayerHandCard
         {
             get
@@ -56,6 +65,9 @@ namespace Poker
             }
         }
 
+        /// <summary>
+        /// Return only dealer's upcards
+        /// </summary>
         public string DealerUpCard
         {
             get
@@ -68,6 +80,9 @@ namespace Poker
             }
         }
 
+        /// <summary>
+        /// Player's hand total
+        /// </summary>
         public int PlayerTotal
         {
             get
@@ -76,6 +91,9 @@ namespace Poker
             }
         }
 
+        /// <summary>
+        /// Dealer's hand total
+        /// </summary>
         public int DealerTotal
         {
             get
@@ -84,6 +102,9 @@ namespace Poker
             }
         }
 
+        /// <summary>
+        /// Return true if player get a blackjack
+        /// </summary>
         public bool IsBlackJack
         {
             get
@@ -209,6 +230,8 @@ namespace Poker
                     result = Result.BlackJackWin;
                 }
             }
+
+            //player will lose if it is busted regardless of dealer's total
             else if (_PlayerHand.IsBusted)
             {
                 ++Lose;
